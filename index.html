@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bright Future Academy</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -93,7 +94,7 @@ body { margin:0; font-family:'Poppins',sans-serif; background:#0b1220; color:whi
 
 .footer { background:black; text-align:center; padding:15px; }
 
-/* MOBILE NAV */
+/* MOBILE */
 @media(max-width:768px){
   .menu-toggle { display:block; }
 
@@ -176,7 +177,6 @@ body { margin:0; font-family:'Poppins',sans-serif; background:#0b1220; color:whi
 
 <div class="cta">
   <h2>Start Your Journey Today</h2>
-  <button class="btn primary" onclick="scrollToSection('contact')">Join Now</button>
 </div>
 
 <div id="contact" class="section">
@@ -195,6 +195,7 @@ body { margin:0; font-family:'Poppins',sans-serif; background:#0b1220; color:whi
   <div class="chat-messages" id="messages"></div>
   <div class="chat-input">
     <input id="userInput" placeholder="Type message...">
+    <button onclick="startVoice()">🎤</button>
     <button onclick="sendMessage()">Send</button>
   </div>
 </div>
@@ -225,14 +226,33 @@ function addMessage(msg){
 
 function getAIResponse(input){
   input=input.toLowerCase();
+
   if(input.includes('course')) return 'We offer Class 10, 12 and NEET coaching.';
-  if(input.includes('fee')) return 'Fees depend on course. Please call us for details.';
+  if(input.includes('fee')) return 'Fees depend on course. Please contact us.';
   if(input.includes('hello')) return 'Hello! How can I help you?';
-  return 'Please contact us for more details!';
+  
+  return 'Can I get your name and phone number so our team can contact you?';
+}
+
+/* 🎤 VOICE */
+function startVoice(){
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Voice not supported in this browser");
+    return;
+  }
+
+  let recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-IN";
+  recognition.start();
+
+  recognition.onresult = function(event){
+    let speech = event.results[0][0].transcript;
+    document.getElementById("userInput").value = speech;
+    sendMessage();
+  };
 }
 </script>
 
-<!-- CHATBASE AI -->
 <script>
 (function(){
   if(!window.chatbase||window.chatbase("getState")!=="initialized"){
@@ -244,7 +264,7 @@ function getAIResponse(input){
   const onLoad=function(){
     const script=document.createElement("script");
     script.src="https://www.chatbase.co/embed.min.js";
-    script.id="pB2h_XY5DKdZLFLySRBtp";
+    script.id="pB2h_XY5DKdZLFLySRBtp";  /* YOUR ORIGINAL ID */
     document.body.appendChild(script)
   };
   if(document.readyState==="complete"){onLoad()}
